@@ -23,12 +23,10 @@ function build_dofmap(element, mesh::Mesh)
 
         for k in 1:dofs_per_entity
             for (entity, entity_dofs) in local_dofs
-	            cell_dofs[:, entity_dofs[k] .+ 1] = dofs_per_entity * (connectivity[:, entity + 1] .- 1) .+ (offset + k)
+                cell_dofs[:, entity_dofs[k] + 1] = dofs_per_entity * (connectivity[:, entity + 1] .- 1) .+ (offset + k)
             end
         end
-
         offset += dofs_per_entity * num_entities(mesh, dim)
     end
-
-    DofMap(cell_dofs, offset, mesh, element)
+    DofMap(cell_dofs, maximum(cell_dofs), mesh, element)
 end

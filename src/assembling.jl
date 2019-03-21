@@ -19,15 +19,15 @@ function assemble(dofmap::DofMap, a_kernel, L_kernel, dtype=Float64)
 
     # Vector of non-zero values in the global matrix
     # These values will be scattered according to "sparsity pattern"
-    values = spzeros(dtype, num_values * num_cells)
+    values = dtype[]
 
     n = 1
     # Storage for coordinates of cell vertices
     cell_coords = zeros(Float32, vert_per_cell, gdim)
 
     # Storage for insertion index sets
-    I = spzeros(Int64, num_values * num_cells)
-    J = spzeros(Int64, num_values * num_cells)
+    I = Int64[]
+    J = Int64[]
 
     A_local = zeros(dtype, dofsize_local, dofsize_local)
     b_local = zeros(dtype, dofsize_local)
@@ -51,9 +51,9 @@ function assemble(dofmap::DofMap, a_kernel, L_kernel, dtype=Float64)
             for j in 1:dofsize_local
                 val = A_local[i, j]
                 if val != 0.0
-                    values[n] = A_local[i, j]
-                    I[n] = iglobal
-                    J[n] = dofmap.cell_dofs[cell_id, j]
+                    push!(values, val)
+                    push!(I, iglobal)
+                    push!(J, dofmap.cell_dofs[cell_id, j])
                 end
                 n += 1
             end
