@@ -9,7 +9,7 @@ function build_unit_square_mesh(nx, ny)
     x = LinRange(0, 1, nx + 1)
     y = LinRange(0, 1, ny + 1)
     vertices = Iterators.product(x, y)
-    cells = zeros(Int64, 2 * nx * ny, 3)
+    cell_vert_conn = zeros(Int64, 2 * nx * ny, 3)
 
     for iy in 0:(ny-1)
         for ix in 0:(nx-1)
@@ -19,19 +19,24 @@ function build_unit_square_mesh(nx, ny)
             v3 = v1 + (nx + 1)
 
             c0 = 2*(iy*nx + ix)
-            cells[c0 + 1, :] = [v0, v1, v2]
-            cells[c0 + 2, :] = [v1, v2, v3]
+            cell_vert_conn[c0 + 1, :] = [v0, v1, v2]
+            cell_vert_conn[c0 + 2, :] = [v1, v2, v3]
         end
     end
 
+    num_cells = length(cell_vert_conn[:, 1])
     ref_cell = FIAT."reference_element"."ufc_cell"("triangle")
-    Mesh(vertices, Dict((2, 0) => cells), ref_cell)
+    Mesh(vertices, Dict((2, 0) => cell_vert_conn, (2, 2) => 1:num_cells), ref_cell)
 end
 
 
 """Number of mesh entities of given dimension"""
 function num_entities(mesh::Mesh, dim)
-    length(mesh.topology[(dim, 0)][:, 1])
+    if dim == 0
+        length(mesh.vertices)
+    else
+        length(mesh.topology[(dim, 0)][:, 1])
+    end
 end
 
 
