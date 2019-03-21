@@ -24,7 +24,7 @@ function build_unit_square_mesh(nx, ny)
         end
     end
 
-    ref_cell = FIAT["reference_element"]["ufc_cell"]("triangle")
+    ref_cell = FIAT."reference_element"."ufc_cell"("triangle")
     Mesh(vertices, Dict((2, 0) => cells), ref_cell)
 end
 
@@ -37,11 +37,11 @@ end
 
 """Compute connectivity between (tdim, d) and (d, 0) mesh entities"""
 function compute_connectivity_tdim_d_0!(mesh::Mesh, d)
-    tdim = mesh.reference_cell["get_dimension"]()
+    tdim = mesh.reference_cell."get_dimension"()
     cell_vertex_conn = mesh.topology[(tdim, 0)]
 
     # Get local (FIAT) connectivity
-    fiat_connectivity = mesh.reference_cell["get_connectivity"]()
+    fiat_connectivity = mesh.reference_cell."get_connectivity"()
     ent_vert_conn_local = fiat_connectivity[(d, 0)]
     cell_ent_conn_local  = fiat_connectivity[(tdim, d)]
 
