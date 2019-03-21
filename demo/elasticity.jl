@@ -6,8 +6,8 @@ using PyCall
 ufl = pyimport("ufl")
 
 # UFL form
-element = ufl."VectorElement"("P", ufl."triangle", 1)
-u, v = ufl."TrialFunction"(element), ufl."TestFunction"(element)
+element = ufl.VectorElement("P", ufl.triangle, 1)
+u, v = ufl.TrialFunction(element), ufl.TestFunction(element)
 
 E = 10.0
 nu = 0.25
