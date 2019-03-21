@@ -24,9 +24,8 @@ function sigma(v)
     2.0*mu*epsilon(v) + lmbda*ufl.tr(epsilon(v)) * ufl.Identity(v.geometric_dimension())
 end
 
-a = ufl.inner(sigma(u), epsilon(v)) * ufl.dx
 
-# println(a)
+a = ufl.inner(sigma(u), epsilon(v)) * ufl.dx
 
 n = 1
 mesh = Minidolfin.build_unit_square_mesh(n, n)
@@ -35,3 +34,13 @@ println("Number of cells=$(Minidolfin.num_entities(mesh, 2))")
 
 dofmap = Minidolfin.build_dofmap(element, mesh)
 println("Number of dofs=$(dofmap.dim)")
+
+function a_kernel(A, cell_coords)
+    fill!(A, 1.0)
+end
+
+function L_kernel(b, cell_coords)
+    b[1] = cell_coords[2]
+end
+
+@time A, b = Minidolfin.assemble(dofmap, a_kernel, L_kernel)

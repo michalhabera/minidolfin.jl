@@ -6,7 +6,7 @@ mutable struct DofMap
 end
 
 
-function build_dofmap(element, mesh)
+function build_dofmap(element, mesh::Mesh)
     fiat_element = ffc.fiatinterface.create_element(element)
     tdim = mesh.reference_cell.get_dimension()
 
@@ -23,9 +23,10 @@ function build_dofmap(element, mesh)
 
         for k in 1:dofs_per_entity
             for (entity, entity_dofs) in local_dofs
-	        cell_dofs[:, entity_dofs[k] .+ 1] = dofs_per_entity * connectivity[:, entity + 1] .+ (offset + k - 1)
+	            cell_dofs[:, entity_dofs[k] .+ 1] = dofs_per_entity * (connectivity[:, entity + 1] .- 1) .+ (offset + k)
             end
         end
+
         offset += dofs_per_entity * num_entities(mesh, dim)
     end
 

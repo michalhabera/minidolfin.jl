@@ -6,9 +6,8 @@ end
 
 
 function build_unit_square_mesh(nx, ny)
-    x = LinRange(0, 1, nx + 1)
-    y = LinRange(0, 1, ny + 1)
-    vertices = Iterators.product(x, y)
+    vertices = [[x, y] for x=LinRange(0, 1, nx + 1), y=LinRange(0, 1, ny + 1)]
+    vertices = collect(transpose(hcat(vertices...)))
     cell_vert_conn = zeros(Int64, 2 * nx * ny, 3)
 
     for iy in 0:(ny-1)

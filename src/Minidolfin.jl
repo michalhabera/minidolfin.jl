@@ -9,5 +9,6 @@ end
 
 include("meshing.jl")
 include("dofmap.jl")
+include("assembling.jl")
 
 end # module
