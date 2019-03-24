@@ -76,7 +76,7 @@ function append_vals!(cell_dofs::Array{Int64, 1}, b::Array{Float64, 1},
             if val != 0.0
                 push!(values, val)
                 push!(I, iglobal)
-                push!(J, dofmap.cell_dofs[cell_id, j])
+                push!(J, cell_dofs[j])
             end
             n += 1
         end
