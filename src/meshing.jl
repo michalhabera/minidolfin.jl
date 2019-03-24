@@ -1,11 +1,11 @@
 mutable struct Mesh
-    vertices
-    topology
+    vertices::Array{Float64, 2}
+    topology::Dict{Tuple{Int8, Int8}, Array{Int64, 2}}
     reference_cell
 end
 
 
-function build_unit_square_mesh(nx, ny)
+function build_unit_square_mesh(nx::Int64, ny::Int64)
     vertices = [[x, y] for x=LinRange(0, 1, nx + 1), y=LinRange(0, 1, ny + 1)]
     vertices = collect(transpose(hcat(vertices...)))
     cell_vert_conn = zeros(Int64, 2 * nx * ny, 3)
@@ -25,12 +25,12 @@ function build_unit_square_mesh(nx, ny)
 
     num_cells = length(cell_vert_conn[:, 1])
     ref_cell = FIAT.reference_element.ufc_cell("triangle")
-    Mesh(vertices, Dict((2, 0) => cell_vert_conn, (2, 2) => 1:num_cells), ref_cell)
+    Mesh(vertices, Dict((2, 0) => cell_vert_conn), ref_cell)
 end
 
 
 """Number of mesh entities of given dimension"""
-function num_entities(mesh::Mesh, dim)
+function num_entities(mesh::Mesh, dim::Int64)::Int64
     if dim == 0
         length(mesh.vertices)
     else
@@ -40,8 +40,8 @@ end
 
 
 """Compute connectivity between (tdim, d) and (d, 0) mesh entities"""
-function compute_connectivity_tdim_d_0!(mesh::Mesh, d)
-    tdim = mesh.reference_cell.get_dimension()
+function compute_connectivity_tdim_d_0!(mesh::Mesh, d::Int64)
+    tdim = mesh.reference_cell.get_dimension()::Int64
     cell_vertex_conn = mesh.topology[(tdim, 0)]
 
     # Get local (FIAT) connectivity
@@ -77,7 +77,7 @@ function compute_connectivity_tdim_d_0!(mesh::Mesh, d)
 end
 
 
-function unique_inverse(arr)
+function unique_inverse(arr::Array{Int64, 2})
 
     inverse = Dict()
     for (i, row) in enumerate(eachrow(arr))
