@@ -1,11 +1,19 @@
-mutable struct Mesh
+struct Mesh
     vertices::Array{Float64, 2}
     topology::Dict{Tuple{Int8, Int8}, Array{Int64, 2}}
     reference_cell
 end
 
 
-function build_unit_square_mesh(nx::Int64, ny::Int64)
+"""
+
+    build_unit_square_mesh(nx, ny)
+
+Build unit square mesh with "left" diagonal and lexicographic
+node ordering.
+
+"""
+function build_unit_square_mesh(nx::Int64, ny::Int64)::Mesh
     vertices = [[x, y] for x=LinRange(0, 1, nx + 1), y=LinRange(0, 1, ny + 1)]
     vertices = collect(transpose(hcat(vertices...)))
     cell_vert_conn = zeros(Int64, 2 * nx * ny, 3)
@@ -25,16 +33,16 @@ function build_unit_square_mesh(nx::Int64, ny::Int64)
 
     num_cells = length(cell_vert_conn[:, 1])
     ref_cell = FIAT.reference_element.ufc_cell("triangle")
-    Mesh(vertices, Dict((2, 0) => cell_vert_conn), ref_cell)
+    return Mesh(vertices, Dict((2, 0) => cell_vert_conn), ref_cell)
 end
 
 
 """Number of mesh entities of given dimension"""
 function num_entities(mesh::Mesh, dim::Int64)::Int64
     if dim == 0
-        length(mesh.vertices)
+        return length(mesh.vertices)
     else
-        length(mesh.topology[(dim, 0)][:, 1])
+        return length(mesh.topology[(dim, 0)][:, 1])
     end
 end
 
@@ -101,5 +109,5 @@ function unique_inverse(arr::Array{Int64, 2})
         end
     end
 
-    (unique, unique_inverse)
+    return (unique, unique_inverse)
 end

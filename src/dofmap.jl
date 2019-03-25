@@ -34,5 +34,5 @@ function build_dofmap(element, mesh::Mesh)
         end
         offset += dofs_per_entity * num_entities(mesh, dim)
     end
-    DofMap(cell_dofs, maximum(cell_dofs), mesh, element)
+    return DofMap(cell_dofs, maximum(cell_dofs), mesh, element)
 end
