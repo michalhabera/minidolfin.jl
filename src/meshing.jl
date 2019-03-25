@@ -7,13 +7,13 @@ end
 
 """
 
-    build_unit_square_mesh(nx, ny)
+    unit_square_mesh(nx, ny)
 
 Build unit square mesh with "left" diagonal and lexicographic
 node ordering.
 
 """
-function build_unit_square_mesh(nx::Int64, ny::Int64)::Mesh
+function unit_square_mesh(nx::Int64, ny::Int64)::Mesh
     vertices = [[x, y] for x=LinRange(0, 1, nx + 1), y=LinRange(0, 1, ny + 1)]
     vertices = collect(transpose(hcat(vertices...)))
     cell_vert_conn = zeros(Int64, 2 * nx * ny, 3)

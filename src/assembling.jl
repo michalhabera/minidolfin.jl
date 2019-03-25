@@ -61,9 +61,9 @@ function assemble!(dofmap::DofMap, a_kernel!::Function, L_kernel!::Function,
         for (i, iglobal) in enumerate(dofmap.cell_dofs[cell_id, 1:dofsize_local])
 
             if bc_dofs[iglobal]
-                A_local[i, :] .= 0.0
-                b_local[:] -= A_local[:, i] * bc_vals[iglobal]
-                A_local[:, i] .= 0.0
+                A_local[i, 1:dofsize_local] .= 0.0
+                b_local[1:dofsize_local] -= A_local[1:dofsize_local, i] * bc_vals[iglobal]
+                A_local[1:dofsize_local, i] .= 0.0
                 A_local[i, i] = 1.0
                 b_local[i] = bc_vals[iglobal]
             end

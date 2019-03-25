@@ -12,7 +12,7 @@ ufl = pyimport("ufl")
 element = ufl.FiniteElement("P", ufl.triangle, 1)
 
 n = 100
-const mesh = Minidolfin.build_unit_square_mesh(n, n)
+const mesh = Minidolfin.unit_square_mesh(n, n)
 Minidolfin.compute_connectivity_tdim_d_0!(mesh, 1)
 println("Number of cells=$(Minidolfin.num_entities(mesh, 2))")
 
@@ -22,9 +22,9 @@ println("Number of dofs=$(dofmap.dim)")
 
 function a_poisson!(A::Array{Float64, 2}, cell_coords::Array{Float64, 2})::Nothing
 
-    x1 = cell_coords[1, 1:2]
-    x2 = cell_coords[2, 1:2]
-    x3 = cell_coords[3, 1:2]
+    x1 = view(cell_coords, 1, 1:2)
+    x2 = view(cell_coords, 2, 1:2)
+    x3 = view(cell_coords, 3, 1:2)
 
     J = [x2 - x1 x3 - x1]
 
@@ -43,9 +43,9 @@ end
 
 function L_poisson!(b::Array{Float64, 1}, cell_coords::Array{Float64, 2})
 
-    x1 = cell_coords[1, 1:2]
-    x2 = cell_coords[2, 1:2]
-    x3 = cell_coords[3, 1:2]
+    x1 = view(cell_coords, 1, 1:2)
+    x2 = view(cell_coords, 2, 1:2)
+    x3 = view(cell_coords, 3, 1:2)
 
     J = [x2 - x1 x3 - x1]
 
