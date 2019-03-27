@@ -7,32 +7,50 @@ end
 
 """
 
-    unit_square_mesh(nx, ny)
+    unit_square_mesh(nx, ny[,cell="triangle"])
 
-Build unit square mesh with "left" diagonal and lexicographic
-node ordering.
+Build unit square mesh with lexicographic vertex ordering.
 
 """
-function unit_square_mesh(nx::Int64, ny::Int64)::Mesh
+function unit_square_mesh(nx::Int64, ny::Int64; cell="triangle")::Mesh
     vertices = [[x, y] for x=LinRange(0, 1, nx + 1), y=LinRange(0, 1, ny + 1)]
     vertices = collect(transpose(hcat(vertices...)))
-    cell_vert_conn = zeros(Int64, 2 * nx * ny, 3)
 
-    for iy in 0:(ny-1)
-        for ix in 0:(nx-1)
-            v0 = iy * (nx + 1) + ix + 1
-            v1 = v0 + 1
-            v2 = v0 + (nx + 1)
-            v3 = v1 + (nx + 1)
+    if cell == "triangle"
+        cell_vert_conn = zeros(Int64, 2 * nx * ny, 3)
 
-            c0 = 2*(iy*nx + ix)
-            cell_vert_conn[c0 + 1, :] = [v0, v1, v2]
-            cell_vert_conn[c0 + 2, :] = [v1, v2, v3]
+        for iy in 1:ny
+            for ix in 1:nx
+                v0 = (iy - 1) * (nx + 1) + ix
+                v1 = v0 + 1
+                v2 = v0 + (nx + 1)
+                v3 = v1 + (nx + 1)
+
+                c0 = 2 * ((iy - 1) * nx + ix - 1)
+                cell_vert_conn[c0 + 1, :] = [v0, v1, v2]
+                cell_vert_conn[c0 + 2, :] = [v1, v2, v3]
+            end
         end
+
+        ref_cell = FIAT.reference_element.ufc_cell("triangle")
+
+    elseif cell == "quadrilateral"
+        cell_vert_conn = zeros(Int64, nx * ny, 4)
+
+        for iy in 1:ny
+            for ix in 1:nx
+                v0 = (iy - 1) * (nx + 1) + ix
+                v1 = v0 + 1
+                v2 = v0 + (nx + 1)
+                v3 = v1 + (nx + 1)
+
+                cell_vert_conn[(iy - 1) * nx + ix, :] = [v0, v1, v2, v3]
+            end
+        end
+
+        ref_cell = FIAT.reference_element.ufc_cell("quadrilateral")
     end
 
-    num_cells = length(cell_vert_conn[:, 1])
-    ref_cell = FIAT.reference_element.ufc_cell("triangle")
     return Mesh(vertices, Dict((2, 0) => cell_vert_conn), ref_cell)
 end
 

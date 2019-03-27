@@ -44,15 +44,13 @@ function assemble!(dofmap::DofMap, a_kernel!::Function, L_kernel!::Function,
 
     for cell_id in 1:num_cells
 
+        println("On cell $cell_id")
+
         fill!(A_local, 0.0)
         fill!(b_local, 0.0)
 
         # Pack vertex coordinates of the cell
-        for j in 1:gdim
-            for i in 1:vert_per_cell
-                cell_coords[i, j] = mesh.vertices[cell_vert_conn[cell_id, i], j]
-            end
-        end
+        cell_coords[1:vert_per_cell, 1:gdim] = mesh.vertices[cell_vert_conn[cell_id, 1:vert_per_cell], 1:gdim]
 
         a_kernel!(A_local, cell_coords)
         L_kernel!(b_local, cell_coords)
