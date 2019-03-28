@@ -44,8 +44,6 @@ function assemble!(dofmap::DofMap, a_kernel!::Function, L_kernel!::Function,
 
     for cell_id in 1:num_cells
 
-        println("On cell $cell_id")
-
         fill!(A_local, 0.0)
         fill!(b_local, 0.0)
 

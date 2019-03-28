@@ -7,16 +7,16 @@ end
 
 """
 
-    unit_square_mesh(nx, ny[,cell="triangle"])
+    unit_square_mesh(nx, ny[,cell=ufl.triangle])
 
 Build unit square mesh with lexicographic vertex ordering.
 
 """
-function unit_square_mesh(nx::Int64, ny::Int64; cell="triangle")::Mesh
+function unit_square_mesh(nx::Int64, ny::Int64; cell=ufl.triangle)::Mesh
     vertices = [[x, y] for x=LinRange(0, 1, nx + 1), y=LinRange(0, 1, ny + 1)]
     vertices = collect(transpose(hcat(vertices...)))
 
-    if cell == "triangle"
+    if cell == ufl.triangle
         cell_vert_conn = zeros(Int64, 2 * nx * ny, 3)
 
         for iy in 1:ny
@@ -34,7 +34,7 @@ function unit_square_mesh(nx::Int64, ny::Int64; cell="triangle")::Mesh
 
         ref_cell = FIAT.reference_element.ufc_cell("triangle")
 
-    elseif cell == "quadrilateral"
+    elseif cell == ufl.quadrilateral
         cell_vert_conn = zeros(Int64, nx * ny, 4)
 
         for iy in 1:ny
@@ -58,7 +58,7 @@ end
 """Number of mesh entities of given dimension"""
 function num_entities(mesh::Mesh, dim::Int64)::Int64
     if dim == 0
-        return length(mesh.vertices)
+        return length(mesh.vertices[:, 1])
     else
         return length(mesh.topology[(dim, 0)][:, 1])
     end

@@ -5,10 +5,13 @@ using PyCall
 function __init__()
     global FIAT = pyimport("FIAT")
     global ffc = pyimport("ffc")
+    global ufl = pyimport("ufl")
 end
 
-include("meshing.jl")
+include("mesh.jl")
 include("dofmap.jl")
-include("assembling.jl")
+include("assemble.jl")
+include("plot.jl")
+include("io.jl")
 
 end # module
